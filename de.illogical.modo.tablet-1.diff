@@ -1,0 +1,333 @@
+diff -r -u -N de.illogical.modo.tablet-1.orig/AndroidManifest.xml de.illogical.modo.tablet-1/AndroidManifest.xml
+--- de.illogical.modo.tablet-1.orig/AndroidManifest.xml	2014-02-22 15:29:23.513080248 +0400
++++ de.illogical.modo.tablet-1/AndroidManifest.xml	2014-02-22 17:52:56.781214321 +0400
+@@ -12,5 +12,10 @@
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+         </activity>
++        <receiver android:name=".ActivityMain$Receiver" android:enabled="true">
++            <intent-filter>
++                <action android:name="android.intent.action.MEDIA_BUTTON" />
++            </intent-filter>
++        </receiver>   
+     </application>
+ </manifest>
+\ В конце файла нет новой строки
+diff -r -u -N de.illogical.modo.tablet-1.orig/smali/de/illogical/modo/tablet/ActivityMain$Receiver.smali de.illogical.modo.tablet-1/smali/de/illogical/modo/tablet/ActivityMain$Receiver.smali
+--- de.illogical.modo.tablet-1.orig/smali/de/illogical/modo/tablet/ActivityMain$Receiver.smali	1970-01-01 03:00:00.000000000 +0300
++++ de.illogical.modo.tablet-1/smali/de/illogical/modo/tablet/ActivityMain$Receiver.smali	2014-02-22 17:32:33.497195280 +0400
+@@ -0,0 +1,114 @@
++.class public Lde/illogical/modo/tablet/ActivityMain$Receiver;
++.super Landroid/content/BroadcastReceiver;
++.source "ActivityMain.java"
++
++
++# annotations
++.annotation system Ldalvik/annotation/EnclosingClass;
++    value = Lde/illogical/modo/tablet/ActivityMain;
++.end annotation
++
++.annotation system Ldalvik/annotation/InnerClass;
++    accessFlags = 0x9
++    name = "Receiver"
++.end annotation
++
++
++# static fields
++.field private static doubled:I
++
++
++# direct methods
++.method static constructor <clinit>()V
++    .locals 1
++
++    .prologue
++    .line 27
++    const/4 v0, 0x0
++
++    sput v0, Lde/illogical/modo/tablet/ActivityMain$Receiver;->doubled:I
++
++    return-void
++.end method
++
++.method public constructor <init>()V
++    .locals 0
++
++    .prologue
++    .line 26
++    invoke-direct {p0}, Landroid/content/BroadcastReceiver;-><init>()V
++
++    return-void
++.end method
++
++
++# virtual methods
++.method public onReceive(Landroid/content/Context;Landroid/content/Intent;)V
++    .locals 3
++    .param p1, "context"    # Landroid/content/Context;
++    .param p2, "intent"    # Landroid/content/Intent;
++
++    .prologue
++    .line 30
++    const-string v1, "android.intent.action.MEDIA_BUTTON"
++
++    invoke-virtual {p2}, Landroid/content/Intent;->getAction()Ljava/lang/String;
++
++    move-result-object v2
++
++    invoke-virtual {v1, v2}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
++
++    move-result v1
++
++    if-eqz v1, :cond_0
++
++    .line 31
++    const-string v1, "android.intent.extra.KEY_EVENT"
++
++    invoke-virtual {p2, v1}, Landroid/content/Intent;->getParcelableExtra(Ljava/lang/String;)Landroid/os/Parcelable;
++
++    move-result-object v0
++
++    check-cast v0, Landroid/view/KeyEvent;
++
++    .line 32
++    .local v0, "event":Landroid/view/KeyEvent;
++    invoke-virtual {v0}, Landroid/view/KeyEvent;->getKeyCode()I
++
++    move-result v1
++
++    const/16 v2, 0x4f
++
++    if-ne v1, v2, :cond_0
++
++    sget v1, Lde/illogical/modo/tablet/ActivityMain$Receiver;->doubled:I
++
++    add-int/lit8 v2, v1, 0x1
++
++    sput v2, Lde/illogical/modo/tablet/ActivityMain$Receiver;->doubled:I
++
++    and-int/lit8 v1, v1, 0x1
++
++    if-nez v1, :cond_0
++
++    .line 33
++    const-string v1, "RSER"
++    const-string v2, "Button pressed"
++    invoke-static {v1, v2}, Landroid/util/Log;->v(Ljava/lang/String;Ljava/lang/String;)I
++
++    invoke-static {}, Lde/illogical/modo/tablet/ActivityMain;->access$0()Lde/illogical/modo/tablet/ActivityMain;
++    move-result-object v1
++    invoke-virtual {v1}, Lde/illogical/modo/tablet/ActivityMain;->getFragmentManager()Landroid/app/FragmentManager;
++    move-result-object v1
++    const v2, 0x7f0b000e
++    invoke-virtual {v1, v2}, Landroid/app/FragmentManager;->findFragmentById(I)Landroid/app/Fragment;
++    move-result-object v0
++    check-cast v0, Lde/illogical/modo/tablet/FragModo;
++    .local v0, "fragmodo":Lde/illogical/modo/tablet/FragModo;
++    invoke-virtual {v0}, Lde/illogical/modo/tablet/FragModo;->nextTrack()V
++    
++    .line 37
++    .end local v0    # "event":Landroid/view/KeyEvent;
++    :cond_0
++    return-void
++.end method
+diff -r -u -N de.illogical.modo.tablet-1.orig/smali/de/illogical/modo/tablet/ActivityMain.smali de.illogical.modo.tablet-1/smali/de/illogical/modo/tablet/ActivityMain.smali
+--- de.illogical.modo.tablet-1.orig/smali/de/illogical/modo/tablet/ActivityMain.smali	2014-02-22 15:29:23.513080248 +0400
++++ de.illogical.modo.tablet-1/smali/de/illogical/modo/tablet/ActivityMain.smali	2014-02-22 17:46:26.013208238 +0400
+@@ -5,14 +5,132 @@
+ # interfaces
+ .implements Lde/illogical/modo/tablet/FragBrowser$FileSelectListener;
+ 
++# annotations
++.annotation system Ldalvik/annotation/MemberClasses;
++    value = {
++        Lde/illogical/modo/tablet/ActivityMain$Receiver;
++    }
++.end annotation
+ 
+ # static fields
+ .field public static final TAG:Ljava/lang/String; = "ActivityMain"
+ 
++# RSER addition
++.field private am:Landroid/media/AudioManager;
++.field private cm:Landroid/content/ComponentName;
++.field private static flag:I
++.field private static thisActivity:Lde/illogical/modo/tablet/ActivityMain;
++
+ 
+ # instance fields
+ .field private wl:Landroid/os/PowerManager$WakeLock;
+ 
++# to get thisActivity
++.method static synthetic access$0()Lde/illogical/modo/tablet/ActivityMain;
++    .locals 1
++
++    .prologue
++    .line 27
++    invoke-static {}, Lde/illogical/modo/tablet/ActivityMain;->thisActivityGet()Lde/illogical/modo/tablet/ActivityMain;
++
++    move-result-object v0
++
++    return-object v0
++.end method
++
++.method private static thisActivityGet()Lde/illogical/modo/tablet/ActivityMain;
++    .locals 1
++
++    .prologue
++    .line 28
++    sget-object v0, Lde/illogical/modo/tablet/ActivityMain;->thisActivity:Lde/illogical/modo/tablet/ActivityMain;
++
++    return-object v0
++.end method
++
++# my methods
++.method private myOnCreate()V
++    .locals 3
++
++    .prologue
++    
++
++    .line 56
++    sput-object p0, Lde/illogical/modo/tablet/ActivityMain;->thisActivity:Lde/illogical/modo/tablet/ActivityMain;
++
++    .line 57
++    const-string v0, "audio"
++
++    invoke-virtual {p0, v0}, Lde/illogical/modo/tablet/ActivityMain;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
++
++    move-result-object v0
++
++    check-cast v0, Landroid/media/AudioManager;
++
++    iput-object v0, p0, Lde/illogical/modo/tablet/ActivityMain;->am:Landroid/media/AudioManager;
++
++    .line 58
++    new-instance v0, Landroid/content/ComponentName;
++
++    invoke-virtual {p0}, Lde/illogical/modo/tablet/ActivityMain;->getPackageName()Ljava/lang/String;
++
++    move-result-object v1
++
++    const-class v2, Lde/illogical/modo/tablet/ActivityMain$Receiver;
++
++    invoke-virtual {v2}, Ljava/lang/Class;->getName()Ljava/lang/String;
++
++    move-result-object v2
++
++    invoke-direct {v0, v1, v2}, Landroid/content/ComponentName;-><init>(Ljava/lang/String;Ljava/lang/String;)V
++
++    iput-object v0, p0, Lde/illogical/modo/tablet/ActivityMain;->cm:Landroid/content/ComponentName;
++
++    .line 63
++    return-void
++.end method
++
++.method private myOnDestroy()V
++    .locals 2
++
++    .prologue
++    .line 51
++    iget-object v0, p0, Lde/illogical/modo/tablet/ActivityMain;->am:Landroid/media/AudioManager;
++
++    iget-object v1, p0, Lde/illogical/modo/tablet/ActivityMain;->cm:Landroid/content/ComponentName;
++
++    invoke-virtual {v0, v1}, Landroid/media/AudioManager;->unregisterMediaButtonEventReceiver(Landroid/content/ComponentName;)V
++
++    .line 53
++    return-void
++.end method
++
++.method private myOnResume()V
++    .locals 2
++
++    .prologue
++    .line 43
++    sget v0, Lde/illogical/modo/tablet/ActivityMain;->flag:I
++
++    if-nez v0, :cond_0
++
++    .line 44
++    iget-object v0, p0, Lde/illogical/modo/tablet/ActivityMain;->am:Landroid/media/AudioManager;
++
++    iget-object v1, p0, Lde/illogical/modo/tablet/ActivityMain;->cm:Landroid/content/ComponentName;
++
++    invoke-virtual {v0, v1}, Landroid/media/AudioManager;->registerMediaButtonEventReceiver(Landroid/content/ComponentName;)V
++
++    .line 45
++    const/4 v0, 0x1
++
++    sput v0, Lde/illogical/modo/tablet/ActivityMain;->flag:I
++
++    .line 47
++    :cond_0
++
++    return-void
++.end method
+ 
+ # direct methods
+ .method public constructor <init>()V
+@@ -73,6 +191,8 @@
+     .line 61
+     invoke-virtual {v0}, Lde/illogical/modo/tablet/FragModo;->stopService()V
+ 
++    invoke-direct {p0}, Lde/illogical/modo/tablet/ActivityMain;->myOnDestroy()V
++    
+     .line 62
+     invoke-virtual {p0}, Lde/illogical/modo/tablet/ActivityMain;->finish()V
+ 
+@@ -140,6 +260,23 @@
+     invoke-virtual {v1}, Landroid/os/PowerManager$WakeLock;->acquire()V
+ 
+     .line 37
++    
++    invoke-direct {p0}, Lde/illogical/modo/tablet/ActivityMain;->myOnCreate()V
++    
++    return-void
++.end method
++
++.method public onResume()V
++    .locals 0
++
++    .prologue
++    .line 95
++    invoke-super {p0}, Landroid/app/Activity;->onResume()V
++
++    .line 96
++    invoke-direct {p0}, Lde/illogical/modo/tablet/ActivityMain;->myOnResume()V
++
++    .line 97
+     return-void
+ .end method
+ 
+diff -r -u -N de.illogical.modo.tablet-1.orig/smali/de/illogical/modo/tablet/FragModo.smali de.illogical.modo.tablet-1/smali/de/illogical/modo/tablet/FragModo.smali
+--- de.illogical.modo.tablet-1.orig/smali/de/illogical/modo/tablet/FragModo.smali	2014-02-22 15:29:23.513080248 +0400
++++ de.illogical.modo.tablet-1/smali/de/illogical/modo/tablet/FragModo.smali	2014-02-22 17:43:16.853205294 +0400
+@@ -1735,6 +1735,27 @@
+     goto :goto_0
+ .end method
+ 
++.method nextTrack()V
++    .locals 2
++    .prologue
++
++
++    iget-boolean v0, p0, Lde/illogical/modo/tablet/FragModo;->prefsIsShuffle:Z
++    if-nez v0, :cond_1
++
++    sget v0, Lde/illogical/modo/tablet/FragModo;->playListPosition:I
++    add-int/lit8 v0, v0, 0x1
++    sput v0, Lde/illogical/modo/tablet/FragModo;->playListPosition:I
++
++
++    :cond_1
++    const/4 v0, 0x0
++    const/4 v1, 0x0
++    invoke-virtual {p0, v0, v1}, Lde/illogical/modo/tablet/FragModo;->prepareNextFile(Ljava/lang/String;I)V
++
++	return-void
++.end method
++
+ .method msToString(J)Ljava/lang/String;
+     .locals 10
+     .param p1, "milli"    # J
