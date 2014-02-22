@@ -1,6 +1,6 @@
 Add action on pushing button on handset. It changes track to next now.
-This is patch to dvalik code and Android.xml files.
-You must use this steps to appy patch:
+
+This is patch to dvalik code and Android.xml files. You must use this steps to appy patch:
 
     $ apktool d de.illogical.modo.tablet-1.apk
     $ cd de.illogical.modo.tablet-1
