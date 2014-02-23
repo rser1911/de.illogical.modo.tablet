@@ -26,3 +26,12 @@ Sign:
 Now you can install or send it to you friends
 
     $ adb install de.illogical.modo.tablet-3.apk
+
+You can found signapk.jar and apktool (+ man):
+
+    https://code.google.com/p/android-apktool/
+    http://www.adbtoolkit.com/kitchen/tools/linux/signapk.jar
+    http://forum.xda-developers.com/showthread.php?t=2195680
+    
+Best regards, rser1911.
+
