@@ -15,8 +15,8 @@ diff -r -u -N de.illogical.modo.tablet-1.orig/AndroidManifest.xml de.illogical.m
 \ В конце файла нет новой строки
 diff -r -u -N de.illogical.modo.tablet-1.orig/smali/de/illogical/modo/tablet/ActivityMain$Receiver.smali de.illogical.modo.tablet-1/smali/de/illogical/modo/tablet/ActivityMain$Receiver.smali
 --- de.illogical.modo.tablet-1.orig/smali/de/illogical/modo/tablet/ActivityMain$Receiver.smali	1970-01-01 03:00:00.000000000 +0300
-+++ de.illogical.modo.tablet-1/smali/de/illogical/modo/tablet/ActivityMain$Receiver.smali	2014-02-22 17:32:33.497195280 +0400
-@@ -0,0 +1,114 @@
++++ de.illogical.modo.tablet-1/smali/de/illogical/modo/tablet/ActivityMain$Receiver.smali	2014-02-23 13:04:29.787545484 +0400
+@@ -0,0 +1,124 @@
 +.class public Lde/illogical/modo/tablet/ActivityMain$Receiver;
 +.super Landroid/content/BroadcastReceiver;
 +.source "ActivityMain.java"
@@ -34,18 +34,17 @@ diff -r -u -N de.illogical.modo.tablet-1.orig/smali/de/illogical/modo/tablet/Act
 +
 +
 +# static fields
-+.field private static doubled:I
++.field private static last_time:J
 +
 +
-+# direct methods
 +.method static constructor <clinit>()V
-+    .locals 1
++    .locals 2
 +
 +    .prologue
-+    .line 27
-+    const/4 v0, 0x0
++    .line 11
++    const-wide/16 v0, 0x0
 +
-+    sput v0, Lde/illogical/modo/tablet/ActivityMain$Receiver;->doubled:I
++    sput-wide v0, Lde/illogical/modo/tablet/ActivityMain$Receiver;->last_time:J
 +
 +    return-void
 +.end method
@@ -63,52 +62,62 @@ diff -r -u -N de.illogical.modo.tablet-1.orig/smali/de/illogical/modo/tablet/Act
 +
 +# virtual methods
 +.method public onReceive(Landroid/content/Context;Landroid/content/Intent;)V
-+    .locals 3
++    .locals 7
 +    .param p1, "context"    # Landroid/content/Context;
 +    .param p2, "intent"    # Landroid/content/Intent;
 +
 +    .prologue
-+    .line 30
-+    const-string v1, "android.intent.action.MEDIA_BUTTON"
++    .line 14
++    const-string v3, "android.intent.action.MEDIA_BUTTON"
 +
 +    invoke-virtual {p2}, Landroid/content/Intent;->getAction()Ljava/lang/String;
 +
-+    move-result-object v2
++    move-result-object v4
 +
-+    invoke-virtual {v1, v2}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
++    invoke-virtual {v3, v4}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
 +
-+    move-result v1
++    move-result v3
 +
-+    if-eqz v1, :cond_0
++    if-eqz v3, :cond_0
 +
-+    .line 31
-+    const-string v1, "android.intent.extra.KEY_EVENT"
++    .line 15
++    const-string v3, "android.intent.extra.KEY_EVENT"
 +
-+    invoke-virtual {p2, v1}, Landroid/content/Intent;->getParcelableExtra(Ljava/lang/String;)Landroid/os/Parcelable;
++    invoke-virtual {p2, v3}, Landroid/content/Intent;->getParcelableExtra(Ljava/lang/String;)Landroid/os/Parcelable;
 +
 +    move-result-object v0
 +
 +    check-cast v0, Landroid/view/KeyEvent;
 +
-+    .line 32
++    .line 16
 +    .local v0, "event":Landroid/view/KeyEvent;
 +    invoke-virtual {v0}, Landroid/view/KeyEvent;->getKeyCode()I
 +
-+    move-result v1
++    move-result v3
 +
-+    const/16 v2, 0x4f
++    const/16 v4, 0x4f
 +
-+    if-ne v1, v2, :cond_0
++    if-ne v3, v4, :cond_0
 +
-+    sget v1, Lde/illogical/modo/tablet/ActivityMain$Receiver;->doubled:I
++    .line 17
++    invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
 +
-+    add-int/lit8 v2, v1, 0x1
++    move-result-wide v1
 +
-+    sput v2, Lde/illogical/modo/tablet/ActivityMain$Receiver;->doubled:I
++    .line 18
++    .local v1, "now_time":J
++    sget-wide v3, Lde/illogical/modo/tablet/ActivityMain$Receiver;->last_time:J
 +
-+    and-int/lit8 v1, v1, 0x1
++    sub-long v3, v1, v3
 +
-+    if-nez v1, :cond_0
++    const-wide/16 v5, 0x5dc
++
++    cmp-long v3, v3, v5
++
++    if-lez v3, :cond_0
++
++    .line 19
++    sput-wide v1, Lde/illogical/modo/tablet/ActivityMain$Receiver;->last_time:J
 +
 +    .line 33
 +    const-string v1, "RSER"
@@ -126,8 +135,9 @@ diff -r -u -N de.illogical.modo.tablet-1.orig/smali/de/illogical/modo/tablet/Act
 +    .local v0, "fragmodo":Lde/illogical/modo/tablet/FragModo;
 +    invoke-virtual {v0}, Lde/illogical/modo/tablet/FragModo;->nextTrack()V
 +    
-+    .line 37
++    .line 25
 +    .end local v0    # "event":Landroid/view/KeyEvent;
++    .end local v1    # "now_time":J
 +    :cond_0
 +    return-void
 +.end method
