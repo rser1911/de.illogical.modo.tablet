@@ -1,4 +1,8 @@
-Add action on pushing button on handset. It changes track to next now.
+Add action on pushing button on handset to Android application "Modo for Tablet".
+
+(https://play.google.com/store/apps/details?id=de.illogical.modo.tablet)
+
+It changes track to next now.
 
 This is patch to dvalik code and Android.xml files. You must use this steps to appy patch:
 
